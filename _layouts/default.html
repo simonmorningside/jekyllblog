@@ -1,82 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ page.title }} | {{ site.title }}</title>
     <link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
     <style>
-      /* Override Slate theme’s low contrast with readable colors */
-      body {
-        color: #f2f2f2;
-        background-color: #0d1117; /* Deep dark tone for contrast */
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        line-height: 1.6;
-        padding: 2rem;
-      }
+        /* Override Slate theme’s low contrast with readable colors */
+        body {
+            color: #f2f2f2;
+            background-color: #0d1117;
+            /* Deep dark tone for contrast */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            padding: 2rem;
+        }
 
-      a {
-        color: #58a6ff;
-        text-decoration: none;
-        transition: color 0.2s ease;
-      }
-      a:hover {
-        color: #79c0ff;
-      }
+        a {
+            color: #58a6ff;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
 
-      header, footer {
-        text-align: center;
-        margin: 2rem 0;
-      }
+        a:hover {
+            color: #79c0ff;
+        }
 
-      header h1, header h2 {
-        color: #ffffff;
-        margin-bottom: 0.3rem;
-      }
+        header,
+        footer {
+            text-align: center;
+            margin: 2rem 0;
+        }
 
-      main {
-        max-width: 900px;
-        margin: 0 auto;
-        background: rgba(255, 255, 255, 0.02);
-        border-radius: 8px;
-        padding: 2rem;
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-      }
+        header h1,
+        header h2 {
+            color: #ffffff;
+            margin-bottom: 0.3rem;
+        }
 
-      footer {
-        font-size: 0.9rem;
-        color: #ccc;
-        border-top: 1px solid #333;
-        padding-top: 1rem;
-      }
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+        }
 
-      code, pre {
-        background-color: #161b22;
-        color: #c9d1d9;
-        padding: 0.2rem 0.4rem;
-        border-radius: 4px;
-        font-size: 0.95em;
-      }
+        footer {
+            font-size: 0.9rem;
+            color: #ccc;
+            border-top: 1px solid #333;
+            padding-top: 1rem;
+        }
+
+        code,
+        pre {
+            background-color: #161b22;
+            color: #c9d1d9;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.95em;
+        }
     </style>
-  </head>
+</head>
 
-  <body>
+<body>
     <header>
-      <h1><a href="{{ '/' | relative_url }}" style="color: #58a6ff; text-decoration: none;">{{ site.title }}</a></h1>
-      <h2 style="color: #d0d0d0; font-weight: normal;">{{ site.description }}</h2>
+        <h1><a href="{{ '/' | relative_url }}" style="color: #58a6ff; text-decoration: none;">{{ site.title }}</a></h1>
+        <h2 style="color: #d0d0d0; font-weight: normal;">{{ site.description }}</h2>
     </header>
+    <nav>
+        <a href="{{ '/' | relative_url }}">Home</a> |
+        <a href="{{ '/archive/' | relative_url }}">Living Archive</a> |
+        <a href="{{ '/about/' | relative_url }}">About</a>
+    </nav>
+
 
     <main>
-      {{ content }}
+        {{ content }}
     </main>
 
     <footer>
-      <p>
-        © {{ site.title }} — 
-        <a href="https://github.com/{{ site.github_username }}" target="_blank">GitHub</a> ·
-        <a href="https://twitter.com/{{ site.twitter_username }}" target="_blank">Twitter</a>
-      </p>
+        <p>
+            © {{ site.title }} —
+            <a href="https://github.com/{{ site.github_username }}" target="_blank">GitHub</a> ·
+            <a href="https://twitter.com/{{ site.twitter_username }}" target="_blank">Twitter</a>
+        </p>
     </footer>
-  </body>
+</body>
+
 </html>

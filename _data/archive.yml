@@ -1,0 +1,14 @@
+- file: artifact1.jpg
+  title: "Recovered Map Fragment"
+  date: "1894"
+  description: "A hand-drawn map fragment discovered in the lower archives of the observatory."
+
+- file: artifact2.jpg
+  title: "Astronomer's Sketchbook"
+  date: "1912"
+  description: "A sketch of celestial movements noted by Dr. Halberg in early 1912."
+
+- file: artifact3.png
+  title: "Photographic Plate #27"
+  date: "1924"
+  description: "An early exposure of the southern sky captured on glass plate film."
