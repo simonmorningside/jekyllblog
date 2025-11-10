@@ -1,0 +1,43 @@
+---
+layout: default
+---
+
+<div class="home-container" style="max-width: 900px; margin: 0 auto; padding: 2rem; color: #f2f2f2;">
+  <header style="text-align: center; margin-bottom: 3rem;">
+    <h1 style="font-size: 2.8rem; margin-bottom: 0.5rem; color: #ffffff;">{{ site.title }}</h1>
+    <p style="font-size: 1.2rem; color: #d0d0d0;">{{ site.description }}</p>
+    <a href="{{ '/about' | relative_url }}" 
+       style="display: inline-block; margin-top: 1rem; padding: 0.6rem 1.2rem; background: #58a6ff; color: #000; border-radius: 6px; text-decoration: none; font-weight: 600;">
+       About Me
+    </a>
+  </header>
+
+  <section style="margin-bottom: 3rem;">
+    <h2 style="border-bottom: 1px solid #777; padding-bottom: 0.5rem; color: #ffffff;">Recent Posts</h2>
+    <ul style="list-style: none; padding: 0; margin: 0;">
+      {% for post in site.posts limit:5 %}
+      <li style="margin: 1.5rem 0;">
+        <h3 style="margin-bottom: 0.3rem;">
+          <a href="{{ post.url | relative_url }}" 
+             style="color: #58a6ff; text-decoration: none; font-size: 1.3rem; font-weight: 600;">
+             {{ post.title }}
+          </a>
+        </h3>
+        <p style="color: #ccc; font-size: 0.9rem; margin-bottom: 0.5rem;">
+          {{ post.date | date: "%B %d, %Y" }}
+        </p>
+        <p style="color: #e0e0e0;">{{ post.excerpt | strip_html | truncatewords: 30 }}</p>
+      </li>
+      {% endfor %}
+    </ul>
+  </section>
+
+  <footer style="text-align: center; font-size: 0.9rem; color: #c0c0c0; margin-top: 2rem;">
+    <p>
+      Follow me on 
+      <a href="https://github.com/{{ site.github_username }}" style="color: #58a6ff; text-decoration: none;">GitHub</a> 
+      or 
+      <a href="https://twitter.com/{{ site.twitter_username }}" style="color: #58a6ff; text-decoration: none;">Twitter</a>.
+    </p>
+  </footer>
+</div>
