@@ -1,7 +1,8 @@
 ---
-title: "This is a new post"
-date: 2025-11-12
-tags: test, new post, lemons
+layout: post
+title:  "Welcome to Jekyll!"
+date:   2025-11-04 18:50:38 -0600
+categories: jekyll update
 ---
 
 This is test content

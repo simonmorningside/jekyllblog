@@ -100,19 +100,31 @@ title: Home
         submitBtn.textContent = 'Submitting...';
         statusDiv.textContent = '';
 
+        // Full ISO-like datetime with timezone offset
         const today = new Date();
         const yyyy = today.getFullYear();
         const mm = String(today.getMonth() + 1).padStart(2, '0');
         const dd = String(today.getDate()).padStart(2, '0');
+        const hh = String(today.getHours()).padStart(2, '0');
+        const min = String(today.getMinutes()).padStart(2, '0');
+        const sec = String(today.getSeconds()).padStart(2, '0');
+        const tzOffset = -today.getTimezoneOffset() / 60; // hours offset
+        const tzSign = tzOffset >= 0 ? '+' : '-';
+        const tzHours = String(Math.abs(tzOffset)).padStart(2, '0');
+        const tzMinutes = String(Math.abs(today.getTimezoneOffset() % 60)).padStart(2, '0');
 
+        const datetime = `${yyyy}-${mm}-${dd} ${hh}:${min}:${sec} ${tzSign}${tzHours}${tzMinutes}`;
+
+        // Slug for filename
         const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
         const filename = `${yyyy}-${mm}-${dd}-${slug}.md`;
 
+        // Markdown content with full front matter
         const markdown = `---
 layout: post
 title: "${title}"
-date: ${yyyy}-${mm}-${dd}
-tags: [${tags.join(', ')}]
+date: ${datetime}
+categories: ${tags.join(' ')}
 ---
 
 ${content}
@@ -137,7 +149,6 @@ ${content}
                 statusDiv.style.color = '#0f0';
                 statusDiv.textContent = 'Post submitted successfully!';
                 newPostForm.reset();
-                // No JS update of recent posts — Jekyll will handle it on rebuild
             } else {
                 statusDiv.style.color = '#f33';
                 statusDiv.textContent = 'Failed: ' + result.error;
