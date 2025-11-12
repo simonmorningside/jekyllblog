@@ -36,7 +36,6 @@ title: Home
         </div>
     </div>
 
-    <!-- Recent Posts -->
     <section class="recent-posts">
         <h2>Recent Posts</h2>
         <ul>
@@ -49,6 +48,7 @@ title: Home
             {% endfor %}
         </ul>
     </section>
+
 
     <!-- Extra content can go here -->
     <section class="extra-content">
@@ -74,14 +74,12 @@ title: Home
     const newPostForm = document.getElementById('newPostForm');
     const submitBtn = newPostForm.querySelector('button[type="submit"]');
 
-    // Add a small status container in the modal
     let statusDiv = document.createElement('div');
     statusDiv.id = 'postStatus';
     statusDiv.style.marginTop = '10px';
     statusDiv.style.fontWeight = '600';
     newPostForm.appendChild(statusDiv);
 
-    // Open & close modal
     newPostBtn.onclick = () => {
         newPostModal.style.display = 'block';
         statusDiv.textContent = '';
@@ -91,7 +89,6 @@ title: Home
         if (e.target === newPostModal) newPostModal.style.display = 'none';
     };
 
-    // Handle form submission
     newPostForm.onsubmit = async (e) => {
         e.preventDefault();
 
@@ -103,26 +100,23 @@ title: Home
         submitBtn.textContent = 'Submitting...';
         statusDiv.textContent = '';
 
-        // Format date
         const today = new Date();
         const yyyy = today.getFullYear();
         const mm = String(today.getMonth() + 1).padStart(2, '0');
         const dd = String(today.getDate()).padStart(2, '0');
 
-        // Slug for filename
         const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
         const filename = `${yyyy}-${mm}-${dd}-${slug}.md`;
 
-        // Markdown content with front matter
         const markdown = `---
-    layout: post
-    title: "${title}"
-    date: ${yyyy}-${mm}-${dd}
-    tags: [${tags.join(', ')}]
-    ---
+layout: post
+title: "${title}"
+date: ${yyyy}-${mm}-${dd}
+tags: [${tags.join(', ')}]
+---
 
-    ${content}
-    `;
+${content}
+`;
 
         try {
             const response = await fetch('https://jekyllblog.onrender.com/new-post', {
@@ -143,6 +137,7 @@ title: Home
                 statusDiv.style.color = '#0f0';
                 statusDiv.textContent = 'Post submitted successfully!';
                 newPostForm.reset();
+                // No JS update of recent posts — Jekyll will handle it on rebuild
             } else {
                 statusDiv.style.color = '#f33';
                 statusDiv.textContent = 'Failed: ' + result.error;
