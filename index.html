@@ -95,47 +95,16 @@ window.onclick = (e) => {
 newPostForm.onsubmit = async (e) => {
     e.preventDefault();
 
-    const title = document.getElementById('postTitle').value.trim();
-    const content = document.getElementById('postContent').value.trim();
-    const tags = document.getElementById('postTags').value.split(',').map(t => t.trim());
-
-    if (!title || !content) {
-        statusDiv.style.color = '#f33';
-        statusDiv.textContent = 'Title and content are required.';
-        return;
-    }
+    const title = document.getElementById('postTitle').value;
+    const content = document.getElementById('postContent').value;
+    const tags = document.getElementById('postTags').value
+        .split(',')
+        .map(t => t.trim())
+        .filter(t => t.length > 0);
 
     submitBtn.disabled = true;
     submitBtn.textContent = 'Submitting...';
     statusDiv.textContent = '';
-
-    // Format date and datetime
-    const now = new Date();
-    const yyyy = now.getFullYear();
-    const mm = String(now.getMonth() + 1).padStart(2, '0');
-    const dd = String(now.getDate()).padStart(2, '0');
-    const hh = String(now.getHours()).padStart(2, '0');
-    const min = String(now.getMinutes()).padStart(2, '0');
-    const ss = String(now.getSeconds()).padStart(2, '0');
-
-    const date = `${yyyy}-${mm}-${dd}`;
-    const datetime = `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss} -0600`;
-
-    // Slug for filename
-    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-    const filename = `${date}-${slug}.md`;
-
-    // Markdown content with a single front matter block
-    const markdown = `---
-layout: post
-title: "${title}"
-date: ${datetime}
-categories: ${tags.join(' ')}
-tags: [${tags.join(', ')}]
----
-
-${content}
-`;
 
     try {
         const response = await fetch('https://jekyllblog.onrender.com/new-post', {
@@ -143,11 +112,7 @@ ${content}
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                title,
-                content: markdown,
-                tags
-            })
+            body: JSON.stringify({ title, content, tags })
         });
 
         const result = await response.json();
@@ -166,6 +131,7 @@ ${content}
     } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = 'Create Post';
+        newPostModal.style.display = 'none';
     }
 };
 </script>
