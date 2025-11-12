@@ -68,97 +68,104 @@ title: Home
 
 <!-- JS for Modal & New Post -->
 <script>
-    const newPostBtn = document.getElementById('newPostBtn');
-    const newPostModal = document.getElementById('newPostModal');
-    const closeModal = document.getElementById('closeModal');
-    const newPostForm = document.getElementById('newPostForm');
-    const submitBtn = newPostForm.querySelector('button[type="submit"]');
+const newPostBtn = document.getElementById('newPostBtn');
+const newPostModal = document.getElementById('newPostModal');
+const closeModal = document.getElementById('closeModal');
+const newPostForm = document.getElementById('newPostForm');
+const submitBtn = newPostForm.querySelector('button[type="submit"]');
 
-    let statusDiv = document.createElement('div');
-    statusDiv.id = 'postStatus';
-    statusDiv.style.marginTop = '10px';
-    statusDiv.style.fontWeight = '600';
-    newPostForm.appendChild(statusDiv);
+// Add a small status container in the modal
+let statusDiv = document.createElement('div');
+statusDiv.id = 'postStatus';
+statusDiv.style.marginTop = '10px';
+statusDiv.style.fontWeight = '600';
+newPostForm.appendChild(statusDiv);
 
-    newPostBtn.onclick = () => {
-        newPostModal.style.display = 'block';
-        statusDiv.textContent = '';
-    };
-    closeModal.onclick = () => newPostModal.style.display = 'none';
-    window.onclick = (e) => {
-        if (e.target === newPostModal) newPostModal.style.display = 'none';
-    };
+// Open & close modal
+newPostBtn.onclick = () => {
+    newPostModal.style.display = 'block';
+    statusDiv.textContent = '';
+};
+closeModal.onclick = () => newPostModal.style.display = 'none';
+window.onclick = (e) => {
+    if (e.target === newPostModal) newPostModal.style.display = 'none';
+};
 
-    newPostForm.onsubmit = async (e) => {
-        e.preventDefault();
+// Handle form submission
+newPostForm.onsubmit = async (e) => {
+    e.preventDefault();
 
-        const title = document.getElementById('postTitle').value;
-        const content = document.getElementById('postContent').value;
-        const tags = document.getElementById('postTags').value.split(',').map(t => t.trim());
+    const title = document.getElementById('postTitle').value.trim();
+    const content = document.getElementById('postContent').value.trim();
+    const tags = document.getElementById('postTags').value.split(',').map(t => t.trim());
 
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Submitting...';
-        statusDiv.textContent = '';
+    if (!title || !content) {
+        statusDiv.style.color = '#f33';
+        statusDiv.textContent = 'Title and content are required.';
+        return;
+    }
 
-        // Full ISO-like datetime with timezone offset
-        const today = new Date();
-        const yyyy = today.getFullYear();
-        const mm = String(today.getMonth() + 1).padStart(2, '0');
-        const dd = String(today.getDate()).padStart(2, '0');
-        const hh = String(today.getHours()).padStart(2, '0');
-        const min = String(today.getMinutes()).padStart(2, '0');
-        const sec = String(today.getSeconds()).padStart(2, '0');
-        const tzOffset = -today.getTimezoneOffset() / 60; // hours offset
-        const tzSign = tzOffset >= 0 ? '+' : '-';
-        const tzHours = String(Math.abs(tzOffset)).padStart(2, '0');
-        const tzMinutes = String(Math.abs(today.getTimezoneOffset() % 60)).padStart(2, '0');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Submitting...';
+    statusDiv.textContent = '';
 
-        const datetime = `${yyyy}-${mm}-${dd} ${hh}:${min}:${sec} ${tzSign}${tzHours}${tzMinutes}`;
+    // Format date and datetime
+    const now = new Date();
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const dd = String(now.getDate()).padStart(2, '0');
+    const hh = String(now.getHours()).padStart(2, '0');
+    const min = String(now.getMinutes()).padStart(2, '0');
+    const ss = String(now.getSeconds()).padStart(2, '0');
 
-        // Slug for filename
-        const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-        const filename = `${yyyy}-${mm}-${dd}-${slug}.md`;
+    const date = `${yyyy}-${mm}-${dd}`;
+    const datetime = `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss} -0600`;
 
-        // Markdown content with full front matter
-        const markdown = `---
+    // Slug for filename
+    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    const filename = `${date}-${slug}.md`;
+
+    // Markdown content with a single front matter block
+    const markdown = `---
 layout: post
 title: "${title}"
 date: ${datetime}
 categories: ${tags.join(' ')}
+tags: [${tags.join(', ')}]
 ---
 
 ${content}
 `;
 
-        try {
-            const response = await fetch('https://jekyllblog.onrender.com/new-post', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    title,
-                    content: markdown,
-                    tags
-                })
-            });
+    try {
+        const response = await fetch('https://jekyllblog.onrender.com/new-post', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                title,
+                content: markdown,
+                tags
+            })
+        });
 
-            const result = await response.json();
+        const result = await response.json();
 
-            if (result.success) {
-                statusDiv.style.color = '#0f0';
-                statusDiv.textContent = 'Post submitted successfully!';
-                newPostForm.reset();
-            } else {
-                statusDiv.style.color = '#f33';
-                statusDiv.textContent = 'Failed: ' + result.error;
-            }
-        } catch (err) {
+        if (result.success) {
+            statusDiv.style.color = '#0f0';
+            statusDiv.textContent = 'Post submitted successfully!';
+            newPostForm.reset();
+        } else {
             statusDiv.style.color = '#f33';
-            statusDiv.textContent = 'Error connecting to server: ' + err.message;
-        } finally {
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Create Post';
+            statusDiv.textContent = 'Failed: ' + result.error;
         }
-    };
+    } catch (err) {
+        statusDiv.style.color = '#f33';
+        statusDiv.textContent = 'Error connecting to server: ' + err.message;
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Create Post';
+    }
+};
 </script>
