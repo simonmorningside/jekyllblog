@@ -6,13 +6,12 @@ const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Enable CORS for your frontend domain
+// Allow your frontend domain
 app.use(cors({
-    origin: '*' // Replace with your frontend URL in production
+    origin: '*'  // Change to your site URL in production
 }));
 app.use(bodyParser.json());
 
-// GitHub client
 const octokit = new Octokit({
     auth: process.env.GITHUB_TOKEN
 });
@@ -21,37 +20,39 @@ app.post('/new-post', async (req, res) => {
     try {
         const { title, content, tags } = req.body;
 
-        // Current timestamp
         const now = new Date();
         const yyyy = now.getFullYear();
         const mm = String(now.getMonth() + 1).padStart(2, '0');
         const dd = String(now.getDate()).padStart(2, '0');
         const hh = String(now.getHours()).padStart(2, '0');
         const min = String(now.getMinutes()).padStart(2, '0');
-        const sec = String(now.getSeconds()).padStart(2, '0');
-        const timestamp = `${yyyy}-${mm}-${dd} ${hh}:${min}:${sec} -0600`;
+        const ss = String(now.getSeconds()).padStart(2, '0');
 
-        // Create a slug for filename
-        const slug = title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+        // Format date like: 2025-11-04 18:50:38 -0600
+        const tzOffset = -now.getTimezoneOffset(); // in minutes
+        const tzSign = tzOffset >= 0 ? '+' : '-';
+        const tzHours = String(Math.floor(Math.abs(tzOffset) / 60)).padStart(2, '0');
+        const tzMinutes = String(Math.abs(tzOffset) % 60).padStart(2, '0');
+        const fullDate = `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss} ${tzSign}${tzHours}${tzMinutes}`;
+
+        // Slug for filename
+        const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
         const filename = `_posts/${yyyy}-${mm}-${dd}-${slug}.md`;
 
-        // Build front matter + content
-        const postContent = `---
+        // Build front matter like your example
+        const frontMatter = `---
 layout: post
 title: "${title}"
-date:   ${timestamp}
+date:   ${fullDate}
 categories: ${tags.join(' ')}
-tags: [${tags.join(', ')}]
 ---
-
-${content}
 `;
 
-        // Repository info from environment variables
+        const postContent = frontMatter + '\n' + content + '\n';
+
         const repoOwner = process.env.GITHUB_REPO_OWNER;
         const repoName = process.env.GITHUB_REPO_NAME;
 
-        // Create or update file on GitHub
         const response = await octokit.repos.createOrUpdateFileContents({
             owner: repoOwner,
             repo: repoName,
@@ -68,5 +69,4 @@ ${content}
     }
 });
 
-// Start server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
