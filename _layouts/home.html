@@ -1,8 +1,12 @@
----
-layout: default
----
-
-<div class="home-container" style="max-width: 900px; margin: 0 auto; padding: 2rem; color: #f2f2f2;">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ page.title }} | {{ site.title }}</title>
+  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/assets/css/home.css' | relative_url }}">
+</head>
+<body>
   <header style="text-align: center; margin-bottom: 3rem;">
     <h1 style="font-size: 2.8rem; margin-bottom: 0.5rem; color: #ffffff;">{{ site.title }}</h1>
     <p style="font-size: 1.2rem; color: #d0d0d0;">{{ site.description }}</p>
@@ -12,25 +16,9 @@ layout: default
     </a>
   </header>
 
-  <section style="margin-bottom: 3rem;">
-    <h2 style="border-bottom: 1px solid #777; padding-bottom: 0.5rem; color: #ffffff;">Recent Posts</h2>
-    <ul style="list-style: none; padding: 0; margin: 0;">
-      {% for post in site.posts limit:5 %}
-      <li style="margin: 1.5rem 0;">
-        <h3 style="margin-bottom: 0.3rem;">
-          <a href="{{ post.url | relative_url }}" 
-             style="color: #58a6ff; text-decoration: none; font-size: 1.3rem; font-weight: 600;">
-             {{ post.title }}
-          </a>
-        </h3>
-        <p style="color: #ccc; font-size: 0.9rem; margin-bottom: 0.5rem;">
-          {{ post.date | date: "%B %d, %Y" }}
-        </p>
-        <p style="color: #e0e0e0;">{{ post.excerpt | strip_html | truncatewords: 30 }}</p>
-      </li>
-      {% endfor %}
-    </ul>
-  </section>
+  <main class="home-container" style="max-width: 900px; margin: 0 auto; padding: 2rem; color: #f2f2f2;">
+    {{ content }}
+  </main>
 
   <footer style="text-align: center; font-size: 0.9rem; color: #c0c0c0; margin-top: 2rem;">
     <p>
@@ -40,4 +28,5 @@ layout: default
       <a href="https://twitter.com/{{ site.twitter_username }}" style="color: #58a6ff; text-decoration: none;">Twitter</a>.
     </p>
   </footer>
-</div>
+</body>
+</html>

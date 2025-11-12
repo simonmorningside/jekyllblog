@@ -4,24 +4,25 @@ title: Living Archive
 permalink: /archive/
 ---
 
+<link rel="stylesheet" href="{{ '/assets/css/archive.css' | relative_url }}">
 <section class="archive-container">
   <h1>The Living Archive</h1>
   <p>Explore preserved materials and documents. Click on any card to open it in detail.</p>
 
   <div class="archive-grid">
     {% for item in site.data.archive %}
-      <div class="archive-card"
-           data-src="{{ item.src }}"
-           data-title="{{ item.title }}"
-           data-desc="{{ item.desc }}"
-           data-date="{{ item.date }}"
-           onclick="openModalFromElem(this)">
-        <img src="{{ item.src }}" alt="{{ item.title }}">
-        <div class="archive-caption">
-          <h3>{{ item.title }}</h3>
-          <p>{{ item.date }}</p>
-        </div>
+    <div class="archive-card"
+         data-src="{{ item.image }}"
+         data-title="{{ item.title }}"
+         data-desc="{{ item.description }}"
+         data-date="{{ item.date }}"
+         onclick="openModalFromElem(this)">
+      <img src="{{ item.image }}" alt="{{ item.title }}">
+      <div class="archive-caption">
+        <h3>{{ item.title }}</h3>
+        <p>{{ item.date }}</p>
       </div>
+    </div>
     {% endfor %}
   </div>
 </section>
@@ -38,7 +39,6 @@ permalink: /archive/
     </div>
   </div>
 </div>
-
 
 <script>
   function openModal(src, title, desc, date) {

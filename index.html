@@ -1,0 +1,118 @@
+---
+layout: default
+title: Home
+---
+
+<link rel="stylesheet" href="{{ '/assets/css/home.css' | relative_url }}">
+
+<div class="home-container">
+    <!-- Intro Section -->
+    <header>
+        <h1>{{ site.title }}</h1>
+        <p>{{ site.description }}</p>
+        <a href="{{ '/about' | relative_url }}" class="btn">About Me</a>
+    </header>
+
+    <!-- New Post Button -->
+    <button id="newPostBtn" class="btn">New Post</button>
+
+    <!-- New Post Modal -->
+    <div id="newPostModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <h2>Create a New Post</h2>
+            <form id="newPostForm">
+                <label>Title:</label><br>
+                <input type="text" id="postTitle" required><br>
+
+                <label>Content:</label><br>
+                <textarea id="postContent" rows="6" required></textarea><br>
+
+                <label>Tags (comma separated):</label><br>
+                <input type="text" id="postTags"><br>
+
+                <button type="submit">Create Post</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Recent Posts -->
+    <section class="recent-posts">
+        <h2>Recent Posts</h2>
+        <ul>
+            {% for post in site.posts limit:5 %}
+            <li>
+                <h3><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
+                <p>{{ post.date | date: "%B %d, %Y" }}</p>
+                <p>{{ post.excerpt | strip_html | truncatewords: 30 }}</p>
+            </li>
+            {% endfor %}
+        </ul>
+    </section>
+
+    <!-- Extra content can go here -->
+    <section class="extra-content">
+        <!-- Add anything you want below -->
+    </section>
+
+    <footer>
+        <p>
+            Follow me on
+            <a href="https://github.com/{{ site.github_username }}">GitHub</a> or
+            <a href="https://twitter.com/{{ site.twitter_username }}">Twitter</a>.
+        </p>
+    </footer>
+</div>
+
+<!-- JS for Modal & New Post -->
+<script>
+    const newPostBtn = document.getElementById('newPostBtn');
+    const newPostModal = document.getElementById('newPostModal');
+    const closeModal = document.getElementById('closeModal');
+    const newPostForm = document.getElementById('newPostForm');
+
+    // Open & close modal
+    newPostBtn.onclick = () => newPostModal.style.display = 'block';
+    closeModal.onclick = () => newPostModal.style.display = 'none';
+    window.onclick = (e) => {
+        if (e.target === newPostModal) newPostModal.style.display = 'none';
+    };
+
+    // Handle form submission
+    newPostForm.onsubmit = (e) => {
+        e.preventDefault();
+
+        const title = document.getElementById('postTitle').value;
+        const content = document.getElementById('postContent').value;
+        const tags = document.getElementById('postTags').value.split(',').map(t => t.trim());
+
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+
+        const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        const filename = `${yyyy}-${mm}-${dd}-${slug}.md`;
+
+        const markdown = `---
+layout: post
+title: "${title}"
+date: ${yyyy}-${mm}-${dd}
+tags: [${tags.join(', ')}]
+---
+
+${content}
+`;
+
+        const blob = new Blob([markdown], {
+            type: 'text/markdown'
+        });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        link.click();
+
+        newPostModal.style.display = 'none';
+        newPostForm.reset();
+    };
+</script>
