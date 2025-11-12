@@ -22,10 +22,11 @@ title: Simon’s Jekyll Site
 email: your-email@example.com
 description: >-
   My GitHub Pages site using the Slate theme.
-baseurl: "/jekyllblog"
-url: "https://simonmorningside.github.io"
+baseurl: "/jekyllblog"        # The repository name
+url: "https://simonmorningside.github.io"   # Your main GitHub Pages domain
 twitter_username: jekyllrb
 github_username: simonmorningside
+
 
 # Use the GitHub Pages Slate theme
 remote_theme: pages-themes/slate@v0.2.0
