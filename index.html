@@ -64,55 +64,95 @@ title: Home
     </footer>
 </div>
 
+
+
 <!-- JS for Modal & New Post -->
 <script>
     const newPostBtn = document.getElementById('newPostBtn');
     const newPostModal = document.getElementById('newPostModal');
     const closeModal = document.getElementById('closeModal');
     const newPostForm = document.getElementById('newPostForm');
+    const submitBtn = newPostForm.querySelector('button[type="submit"]');
+
+    // Add a small status container in the modal
+    let statusDiv = document.createElement('div');
+    statusDiv.id = 'postStatus';
+    statusDiv.style.marginTop = '10px';
+    statusDiv.style.fontWeight = '600';
+    newPostForm.appendChild(statusDiv);
 
     // Open & close modal
-    newPostBtn.onclick = () => newPostModal.style.display = 'block';
+    newPostBtn.onclick = () => {
+        newPostModal.style.display = 'block';
+        statusDiv.textContent = '';
+    };
     closeModal.onclick = () => newPostModal.style.display = 'none';
     window.onclick = (e) => {
         if (e.target === newPostModal) newPostModal.style.display = 'none';
     };
 
     // Handle form submission
-    newPostForm.onsubmit = (e) => {
+    newPostForm.onsubmit = async (e) => {
         e.preventDefault();
 
         const title = document.getElementById('postTitle').value;
         const content = document.getElementById('postContent').value;
         const tags = document.getElementById('postTags').value.split(',').map(t => t.trim());
 
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Submitting...';
+        statusDiv.textContent = '';
+
+        // Format date
         const today = new Date();
         const yyyy = today.getFullYear();
         const mm = String(today.getMonth() + 1).padStart(2, '0');
         const dd = String(today.getDate()).padStart(2, '0');
 
+        // Slug for filename
         const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
         const filename = `${yyyy}-${mm}-${dd}-${slug}.md`;
 
+        // Markdown content with front matter
         const markdown = `---
-layout: post
-title: "${title}"
-date: ${yyyy}-${mm}-${dd}
-tags: [${tags.join(', ')}]
----
+    layout: post
+    title: "${title}"
+    date: ${yyyy}-${mm}-${dd}
+    tags: [${tags.join(', ')}]
+    ---
 
-${content}
-`;
+    ${content}
+    `;
 
-        const blob = new Blob([markdown], {
-            type: 'text/markdown'
-        });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = filename;
-        link.click();
+        try {
+            const response = await fetch('https://jekyllblog.onrender.com/new-post', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    title,
+                    content: markdown,
+                    tags
+                })
+            });
 
-        newPostModal.style.display = 'none';
-        newPostForm.reset();
+            const result = await response.json();
+
+            if (result.success) {
+                statusDiv.style.color = '#0f0';
+                statusDiv.textContent = 'Post submitted successfully!';
+                newPostForm.reset();
+            } else {
+                statusDiv.style.color = '#f33';
+                statusDiv.textContent = 'Failed: ' + result.error;
+            }
+        } catch (err) {
+            statusDiv.style.color = '#f33';
+            statusDiv.textContent = 'Error connecting to server: ' + err.message;
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Create Post';
+        }
     };
 </script>
